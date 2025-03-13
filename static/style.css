@@ -1,0 +1,52 @@
+body {
+    background-color: #F5F6FA;
+}
+
+.container {
+    max-width: 800px;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: none;
+    border-radius: 8px;
+}
+
+.card-header {
+    background-color: #0093B4;
+    color: white;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.btn-primary {
+    background-color: #0093B4;
+    border-color: #0093B4;
+    padding: 10px 30px;
+}
+
+.btn-primary:hover {
+    background-color: #007a96;
+    border-color: #007a96;
+}
+
+#resultadoTotal {
+    color: #0093B4;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+#resultadoInfo {
+    color: #2C3E50;
+    font-size: 1.1rem;
+    text-align: center;
+    margin-top: 15px;
+}
+
+#resultadoInfo p {
+    margin-bottom: 8px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0093B4;
+    box-shadow: 0 0 0 0.2rem rgba(0, 147, 180, 0.25);
+}
