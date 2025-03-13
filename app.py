@@ -63,20 +63,36 @@ def consultar():
                         query += """ AND (a_peca_foi_aprovada = 'Não' 
                                     OR a_peca_foi_aprovada = 'Bloqueio' 
                                     OR a_peca_foi_aprovada = 'Liberado Din')"""
-                    query += " AND a_peca_foi_aprovada = %s"
-                    params.append(aprovacao)
 
                 cursor.execute(query, params)
                 resultado = cursor.fetchone()[0] or 0
 
-                return jsonify({
-                    'success': True,
-                    'resultado': resultado,
-                    'data_inicio': data_inicio,
-                    'data_fim': data_fim,
-                    'fabrica': fabrica,
-                    'aprovacao': aprovacao
-                })
+                # Se for "Todas", busca os resultados separadamente
+                if aprovacao == "Todas":
+                    # Consulta para "Sim"
+                    query_sim = query + """ AND (a_peca_foi_aprovada = 'Sim' 
+                                    OR a_peca_foi_aprovada IS NULL 
+                                    OR a_peca_foi_aprovada = 'Condicional')"""
+                    cursor.execute(query_sim, params)
+                    resultado_sim = cursor.fetchone()[0] or 0
+
+                    # Consulta para "Não"
+                    query_nao = query + """ AND (a_peca_foi_aprovada = 'Não' 
+                                    OR a_peca_foi_aprovada = 'Bloqueio' 
+                                    OR a_peca_foi_aprovada = 'Liberado Din')"""
+                    cursor.execute(query_nao, params)
+                    resultado_nao = cursor.fetchone()[0] or 0
+
+                    return jsonify({
+                        'success': True,
+                        'resultado': resultado,
+                        'resultado_sim': resultado_sim,
+                        'resultado_nao': resultado_nao,
+                        'data_inicio': data_inicio,
+                        'data_fim': data_fim,
+                        'fabrica': fabrica,
+                        'aprovacao': aprovacao
+                    })
 
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})

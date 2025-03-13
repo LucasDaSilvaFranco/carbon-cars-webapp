@@ -32,26 +32,25 @@ document.getElementById('consultaForm').addEventListener('submit', function(e) {
             const resultadoCard = document.getElementById('resultadoCard');
             const resultadoTotal = document.getElementById('resultadoTotal');
             const resultadoInfo = document.getElementById('resultadoInfo');
-
-            // Formata o número
-            const formattedResult = new Intl.NumberFormat('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }).format(data.resultado);
-
-            resultadoTotal.textContent = `${formattedResult} m²`;
-
-            // Constrói o texto de informações
-            let infoHTML = `<p><strong>Período:</strong> ${formatarData(data.data_inicio)} até ${formatarData(data.data_fim)}</p>`;
-            if (data.fabrica !== 'Todas') {
-                infoHTML += `<p><strong>Fábrica:</strong> ${data.fabrica}</p>`;
-            }
-            if (data.aprovacao !== 'Todas') {
-                infoHTML += `<p><strong>Aprovados:</strong> ${data.aprovacao}</p>`;
-            }
-
-            resultadoInfo.innerHTML = infoHTML;
+            
             resultadoCard.style.display = 'block';
+            
+            if (data.aprovacao === 'Todas') {
+                resultadoTotal.textContent = `${data.resultado.toFixed(2)} m²`;
+                resultadoInfo.innerHTML = `
+                    <p>Período: ${formatarData(data.data_inicio)} a ${formatarData(data.data_fim)}</p>
+                    <p>Fábrica: ${data.fabrica}</p>
+                    <p>Aprovados: ${data.resultado_sim.toFixed(2)} m²</p>
+                    <p>Não Aprovados: ${data.resultado_nao.toFixed(2)} m²</p>
+                `;
+            } else {
+                resultadoTotal.textContent = `${data.resultado.toFixed(2)} m²`;
+                resultadoInfo.innerHTML = `
+                    <p>Período: ${formatarData(data.data_inicio)} a ${formatarData(data.data_fim)}</p>
+                    <p>Fábrica: ${data.fabrica}</p>
+                    <p>Status: ${data.aprovacao}</p>
+                `;
+            }
         } else {
             alert('Erro ao consultar: ' + data.error);
         }
