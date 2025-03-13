@@ -22,6 +22,11 @@ def get_fabricas():
             cursor.execute("SELECT DISTINCT fabrica FROM insp_final_checklist ORDER BY fabrica")
             return [fabrica[0] for fabrica in cursor.fetchall()]
 
+# Adicione uma rota de health check
+@app.route('/health')
+def health_check():
+    return 'OK', 200
+
 @app.route('/')
 def index():
     fabricas = get_fabricas()
