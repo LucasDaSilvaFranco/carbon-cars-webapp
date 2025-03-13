@@ -40,15 +40,15 @@ document.getElementById('consultaForm').addEventListener('submit', function(e) {
                 resultadoInfo.innerHTML = `
                     <p>Período: ${formatarData(data.data_inicio)} a ${formatarData(data.data_fim)}</p>
                     <p>Fábrica: ${data.fabrica}</p>
-                    <p>Aprovados: ${data.resultado_sim.toFixed(2)} m²</p>
-                    <p>Não Aprovados: ${data.resultado_nao.toFixed(2)} m²</p>
+                    <p>Aprovados: <span class="resultado-destaque">${data.resultado_sim.toFixed(2)} m²</span></p>
+                    <p>Não Aprovados: <span class="resultado-destaque">${data.resultado_nao.toFixed(2)} m²</span></p>
                 `;
             } else {
                 resultadoTotal.textContent = `${data.resultado.toFixed(2)} m²`;
                 resultadoInfo.innerHTML = `
                     <p>Período: ${formatarData(data.data_inicio)} a ${formatarData(data.data_fim)}</p>
                     <p>Fábrica: ${data.fabrica}</p>
-                    <p>Status: ${data.aprovacao}</p>
+                    <p>Status: <span class="resultado-destaque">${data.aprovacao}</span></p>
                 `;
             }
         } else {
