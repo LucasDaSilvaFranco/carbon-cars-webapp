@@ -55,6 +55,14 @@ def consultar():
                     params.append(fabrica)
 
                 if aprovacao and aprovacao != "Todas":
+                    if aprovacao == "Sim":
+                        query += """ AND (a_peca_foi_aprovada = 'Sim' 
+                                    OR a_peca_foi_aprovada IS NULL 
+                                    OR a_peca_foi_aprovada = 'Condicional')"""
+                    else:  # Não
+                        query += """ AND (a_peca_foi_aprovada = 'Não' 
+                                    OR a_peca_foi_aprovada = 'Bloqueio' 
+                                    OR a_peca_foi_aprovada = 'Liberado Din')"""
                     query += " AND a_peca_foi_aprovada = %s"
                     params.append(aprovacao)
 
