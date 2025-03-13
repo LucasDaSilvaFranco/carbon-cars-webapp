@@ -43,7 +43,7 @@ def consultar():
     try:
         with get_db_connection() as conn:
             with conn.cursor() as cursor:
-                query = """
+                base_query = """
                     SELECT SUM(metro_quadrado) 
                     FROM insp_final_checklist
                     WHERE data BETWEEN %s AND %s
@@ -51,43 +51,54 @@ def consultar():
                 params = [data_inicio, data_fim]
 
                 if fabrica and fabrica != "Todas":
-                    query += " AND fabrica = %s"
+                    base_query += " AND fabrica = %s"
                     params.append(fabrica)
 
-                if aprovacao and aprovacao != "Todas":
-                    if aprovacao == "Sim":
-                        query += """ AND (a_peca_foi_aprovada = 'Sim' 
-                                    OR a_peca_foi_aprovada IS NULL 
-                                    OR a_peca_foi_aprovada = 'Condicional')"""
-                    else:  # Não
-                        query += """ AND (a_peca_foi_aprovada = 'Não' 
-                                    OR a_peca_foi_aprovada = 'Bloqueio' 
-                                    OR a_peca_foi_aprovada = 'Liberado Din')"""
-
-                cursor.execute(query, params)
-                resultado = cursor.fetchone()[0] or 0
-
-                # Se for "Todas", busca os resultados separadamente
                 if aprovacao == "Todas":
+                    # Consulta para total
+                    cursor.execute(base_query, params)
+                    resultado_total = cursor.fetchone()[0] or 0
+
                     # Consulta para "Sim"
-                    query_sim = query + """ AND (a_peca_foi_aprovada = 'Sim' 
-                                    OR a_peca_foi_aprovada IS NULL 
-                                    OR a_peca_foi_aprovada = 'Condicional')"""
-                    cursor.execute(query_sim, params)
+                    sim_query = base_query + """ AND (a_peca_foi_aprovada = 'Sim' 
+                                OR a_peca_foi_aprovada IS NULL 
+                                OR a_peca_foi_aprovada = 'Condicional')"""
+                    cursor.execute(sim_query, params)
                     resultado_sim = cursor.fetchone()[0] or 0
 
                     # Consulta para "Não"
-                    query_nao = query + """ AND (a_peca_foi_aprovada = 'Não' 
-                                    OR a_peca_foi_aprovada = 'Bloqueio' 
-                                    OR a_peca_foi_aprovada = 'Liberado Din')"""
-                    cursor.execute(query_nao, params)
+                    nao_query = base_query + """ AND (a_peca_foi_aprovada = 'Não' 
+                                OR a_peca_foi_aprovada = 'Bloqueio' 
+                                OR a_peca_foi_aprovada = 'Liberado Din')"""
+                    cursor.execute(nao_query, params)
                     resultado_nao = cursor.fetchone()[0] or 0
 
                     return jsonify({
                         'success': True,
-                        'resultado': resultado,
+                        'resultado': resultado_total,
                         'resultado_sim': resultado_sim,
                         'resultado_nao': resultado_nao,
+                        'data_inicio': data_inicio,
+                        'data_fim': data_fim,
+                        'fabrica': fabrica,
+                        'aprovacao': aprovacao
+                    })
+                else:
+                    if aprovacao == "Sim":
+                        base_query += """ AND (a_peca_foi_aprovada = 'Sim' 
+                                    OR a_peca_foi_aprovada IS NULL 
+                                    OR a_peca_foi_aprovada = 'Condicional')"""
+                    else:  # Não
+                        base_query += """ AND (a_peca_foi_aprovada = 'Não' 
+                                    OR a_peca_foi_aprovada = 'Bloqueio' 
+                                    OR a_peca_foi_aprovada = 'Liberado Din')"""
+                    
+                    cursor.execute(base_query, params)
+                    resultado = cursor.fetchone()[0] or 0
+
+                    return jsonify({
+                        'success': True,
+                        'resultado': resultado,
                         'data_inicio': data_inicio,
                         'data_fim': data_fim,
                         'fabrica': fabrica,
